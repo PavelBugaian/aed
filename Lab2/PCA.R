@@ -3,12 +3,12 @@ library(ggplot2) # For plotting
 library(ggrepel) # For better label placement
 library(tibble)
 library(ggfortify)
+library(psych)
 
-years <- as.vector(gdp_score[1,-1][, -2])
-gdp_rate_de <- as.vector(gdp_score[2,-1][, -2])
-gdp_rate_de_reversed <- rev(gdp_rate_de)
-gdp_rate_fr <- as.vector(gdp_score[3,-1][, -2])
-gdp_rate_de_num <- as.numeric(gdp_score[2,-1][, -2])
+gdp_score_tf <- t(gdp_rate_2)
+years <- as.vector(gdp_rate_2[1,-1])
+colnames(gdp_score_tf) <- gdp_score_tf[1,]
+gdp_score_tf <- as.data.frame(gdp_score_tf[-1,])
 
 hist(gdp_rate_de_num, col = "red", 
      main = "GDP Rate in Germany", xlab = "GDP Rate, %")
@@ -25,11 +25,12 @@ plot(
   main = "GDP Rate in Germany",
 )
 
-hicp_de <- as.vector(hicp[2,-1])
+hicp_tf <- hicp[, c(-1, -2, -3, -4, -5)]
+hicp_de <- as.vector(hicp_tf[2,-1])
 hicp_de_num <- as.numeric(hicp[2,-1])
 
 plot(
-  as.vector(hicp[1,-1]), 
+  as.vector(hicp_tf[1,-1]), 
   hicp_de,
   type = "b",
   xlab = "year", 
@@ -39,16 +40,22 @@ plot(
 )
 
 gdp_pca <- as.numeric(gdp_rate_de_reversed[-c(1:3)])
-  
+
+pca <- principal(pca_df, nfactors = 2, rotate = "varimax")
+pairs.panels(pca_df, gap=0, pch=21)
+
+hpi_normal <- t(hpi)
+colnames(hpi_normal) <- hpi_normal[1,]
+hpi_normal <- as.data.frame(hpi_normal[-1,])
+
+hpi_normal_scaled <- scale(as.numeric(hpi_normal$Germany))
+
+length(hicp_de_num)
+length(gdp_pca)
+length(hpi_normal_scaled)
+
 pca_df <- data.frame(
   hicp = hicp_de_num,
-  gdp_date = gdp_pca
+  gdp_date = gdp_pca,
+  hpi = hpi_normal_scaled
 )
-
-# PCA
-pca <- prcomp(pca_df, center = TRUE, scale. = TRUE)
-plot(pca$x)
-biplot(pca)
-screeplot(pca)
-
-autoplot(pca, loadings = TRUE, loadings.label = TRUE, loadings.label.size = 3)
