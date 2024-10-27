@@ -1,31 +1,25 @@
 library(dplyr)
 
-data <- unemployment[, -1]
-unmp_rate <- lapply(data[2, ], function(x) {as.numeric(gsub(",", ".", x))})
-plot(
-  as.vector(data[1, ]), 
-  as.vector(unmp_rate), 
-  type = "b", pch = 19, col = "red", xlab = "year", ylab = "rate"
-)
-
-
-lapply(unemployment_by_land[-1, c(2:13)], function(x) {
-  as.numeric(gsub(",", ".", x))
-})
-data_by_land <- unemployment_by_land[-1, c(2:13)]
 hist(
-  some_df$V2, 
+  some_df$V13, 
+  breaks = seq(1, 6, by=1),
   col="red", 
-  main="Unemployment in 2012 by region",
-  xlab="% of unemployed"
+  main="Unemployment in 2023 by region in Germany",
+  xlab="% of unemployed",
+)
+col_means = data.frame(unmpMeans = colMeans(some_df, na.rm = TRUE))
+unpm_years <- as.vector(unemployment_by_land[1, -1])
+plot(
+  hpi_years[8:19],
+  as.vector(col_means$unmpMeans),
+  type = "b", pch = 19, col = "red", 
+  xlab = "year", 
+  ylab = "% of unemployment",
+  main = "Unemployment rates in Germany from 2012 to 2023",
 )
 
-hist(
-  some_df$V10,
-  col="red",
-  main="Unemployment in 2020 by region",
-  xlab="% of unemployed"
-)
-
-density_object <- density(some_df$V2)
-plot(density_object)
+unemp_y <- as.vector(some_df$V13)
+y_mean <- mean(unemp_y, na.rm = TRUE)
+y_sd <- sd(unemp_y, na.rm = TRUE)
+y_min <- min(unemp_y, na.rm = TRUE)
+y_max <- max(unemp_y, na.rm = TRUE)
